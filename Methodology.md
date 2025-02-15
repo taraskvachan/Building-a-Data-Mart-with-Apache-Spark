@@ -7,7 +7,7 @@ Data Mart Tables:
 <li>dates_agg</li>
 </ol>
 
-## Attributive composition
+## 1. Attributive composition
 
 ### customer_detailed table
 
@@ -72,7 +72,7 @@ Data Mart Tables:
 | 9  | total_duration   | long        | Total duration of visits in seconds|
 | 10 | avg_deal_cost    | decimal(19,2) | Average deal cost                        |
 
-## Sources
+## 2. Sources
 
 | № | Storage location | Schema          | Table | Description                                               |
 |---|----------------|----------------|---------|--------------------------------------------------------|
@@ -82,4 +82,134 @@ Data Mart Tables:
 | 4 | HDFS           | website_events | submits | Completed forms on the website for submitting an application/callback |
 | 5 | HDFS           | system_events  | deals   | Ordered design projects                             |
 
-## Methodology
+## 3. Methodology
+
+### visits (ClickHouse)
+
+```
+with filtered_step1 as (
+    select
+        visitDateTime::date as dt,
+        visitid,
+        clientID,
+        URL,
+        duration,
+        source,
+        UTMCampaign,
+        params,
+        replaceRegexpAll(params, '\[|\]', '') as params_regex,
+        splitByString(', ', replaceRegexpAll(params, '\[|\]', '')) as params_split
+    from marketing.visits
+    where visitDateTime >= '2024-01-01' and visitDateTime < '2025-01-28'
+    and source in ('ad', 'direct')
+    and (
+        match(URL, '.*checkout.*') or
+        match(URL, '.*add.*') or
+        match(URL, '.*home.*') or
+        match(URL, '.*contact.*') or
+        match(URL, '.*top50.*') or
+        match(URL, '.*customer-service.*') or
+        match(URL, '.*wishlist.*') or
+        match(URL, '.*sale.*') or
+        match(URL, '.*best-sellers.*') or
+        match(URL, '.*view.*') or
+        match(URL, '.*discount.*') or
+        match(URL, '.*featured.*') or
+        match(URL, '.*new-arrivals.*') or
+        match(URL, '.*settings.*') or
+        match(URL, '.*return-policy.*') or
+        match(URL, '.*edit.*') or
+        match(URL, '.*delete.*') or
+        match(URL, '.*reviews.*') or
+        match(URL, '.*products.*') or
+        match(URL, '.*about.*')
+    )
+),
+filtered_step2 as (
+    select *,
+    replaceAll(params_split[1], '\'', '') as event_type,
+    toInt32OrNull(params_split[2]) as event_id
+    from filtered_step1
+)
+select
+    dt,
+    visitid,
+    clientID,
+    URL,
+    duration,
+    source,
+    UTMCampaign,
+    event_type,
+    event_id
+from filtered_step2
+where event_type = 'submit';
+```
+
+### costs (Postgres)
+
+```
+select
+    date,
+    campaign_id,
+    round(sum(costs)::numeric, 2) as costs,
+    sum(clicks) as clicks,
+    sum(views) as views
+from public.costs
+group by date, campaign_id
+order by date, campaign_id;
+```
+
+### campaigns_dict (Spark SQL)
+
+```
+campaigns_dict = spark.read.option('header', True).csv('campaigns_dict.csv')
+campaigns_dict.createOrReplaceTempView('campaigns_dict_view')
+campaigns_dict = spark.sql("""
+    select
+        campaign_id,
+        campaign_name,
+        case
+            when campaign_name like 'year%' then 'Год'
+            when campaign_name like 'quarter%' then 'Квартал'
+            when campaign_name like 'month%' then 'Месяц'
+            else null
+        end as campaign_duration
+    from campaigns_dict_view
+""")	
+```
+
+### submits (Spark SQL)
+
+```
+submits = spark.sql("""
+    SELECT
+        submit_id,
+        name,
+        CAST(phone AS STRING) AS phone,
+        CONCAT('+', phone) AS phone_plus,
+        MD5(CAST(phone AS STRING)) AS phone_md5,
+        MD5(CONCAT('+', phone)) AS phone_plus_md5
+    FROM website_events.submits
+""")
+```
+
+### deals (pandas)
+
+```
+deals_pdf = spark.table('system_events.deals').toPandas()
+deals_pdf[['username', 'domain']] = deals_pdf['email'].str.split('@', expand=True)
+filtered_deals_pdf = deals_pdf[deals_pdf['domain'].isin(['example.com', 'example.org', 'example.net'])]
+```
+
+## 4. Logic of creating our Data Mart
+
+Legend:
+<ol>
+<li>purple - sources</li>
+<li>turquoise - intermediate tables</li>
+<li>maroon - cleaned and prepared dataframes</li>
+<li>blue - join conditions</li>
+<li>green - final tables</li>
+</ol>
+![5](https://github.com/user-attachments/assets/3a7475d0-1026-4996-b86b-fce62ebb7db9)
+
