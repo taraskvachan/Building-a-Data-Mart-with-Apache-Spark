@@ -24,10 +24,10 @@ Data Mart Tables:
 | 9  | event_id         | integer       | Event ID                                     |
 | 10 | submit_id        | long        | Submit ID                                     |
 | 11 | name             | string        | Client name                                                |
-| 12 | phone            | string        | Phone                                          |
-| 13 | phone_plus       | string        | Phone with a + sign                              |
-| 14 | phone_md5        | string        | Phone hashed with md5 algorithm             |
-| 15 | phone_plus_md5   | string        | Phone with + sign, hashed with md5 algorithm |
+| 12 | phone            | string        | Phone number                                         |
+| 13 | phone_plus       | string        | Phone number with a plus (+) sign                              |
+| 14 | phone_md5        | string        | Phone number hashed with md5 algorithm             |
+| 15 | phone_plus_md5   | string        | Phone number with a plus (+) sign, hashed with md5 algorithm |
 | 16 | deal_id          | long        | Deal ID                                      |
 | 17 | deal_date        | string        | Deal date                                              |
 | 18 | fio              | string        | Client's full name                                               |
@@ -41,3 +41,45 @@ Data Mart Tables:
 | 26 | costs            | decimal(19,2) | Advertising expenses                                         |
 | 27 | clicks           | long        | Clicks                                          |
 | 28 | views            | long        | Views                                      |
+
+### campaigns_agg table
+
+| №#  | Column name | Data type    | Description                                   |
+|----|------------------|---------------|--------------------------------------------|
+| 1  | campaign_name    | string        | Adv campaign name               |
+| 2  | unique_visits    | long        | Visits                         |
+| 3  | unique_clients   | long        | Unique clients            |
+| 4  | unique_submits   | long        | Submits                           |
+| 5  | unique_deals     | long        | Deals                          |
+| 6  | total_costs      | decimal(19,2) | Total adv expenses          |
+| 7  | total_clicks     | long        | Total clicks                         |
+| 8  | total_views      | long        | Total views                    |
+| 9  | total_duration   | long        | Total duration of visits in seconds |
+| 10 | avg_deal_cost    | decimal(19,2) | Average deal cost                     |
+
+### dates_agg table
+
+| #  | Column name | Data type    | Description                                   |
+|----|------------------|---------------|--------------------------------------------|
+| 1  | month            | string        | Month by expenses                          |
+| 2  | unique_visits    | long        | Visits                        |
+| 3  | unique_clients   | long        | Unique clients             |
+| 4  | unique_submits   | long        | Submits                          |
+| 5  | unique_deals     | long        | Deals                           |
+| 6  | total_costs      | decimal(19,2) | Total adv expenses           |
+| 7  | total_clicks     | long        | Total clicks                        |
+| 8  | total_views      | long        | Total views                     |
+| 9  | total_duration   | long        | Total duration of visits in seconds|
+| 10 | avg_deal_cost    | decimal(19,2) | Average deal cost                        |
+
+## Sources
+
+| № | Storage location | Schema          | Table | Description                                               |
+|---|----------------|----------------|---------|--------------------------------------------------------|
+| 1 | ClickHouse     | public      | visits  | Visits of site users                  |
+| 2 | Postgres       | public         | costs   | Advertising costs                                    |
+| 3 | csv            | -              | -       | Dict with comparison of adv campaigns           |
+| 4 | HDFS           | website_events | submits | Completed forms on the website for submitting an application/callback |
+| 5 | HDFS           | system_events  | deals   | Ordered design projects                             |
+
+## Methodology
