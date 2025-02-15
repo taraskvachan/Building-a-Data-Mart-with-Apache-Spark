@@ -211,5 +211,6 @@ Legend:
 <li>blue - join conditions</li>
 <li>green - final tables</li>
 </ol>
+
 ![5](https://github.com/user-attachments/assets/3a7475d0-1026-4996-b86b-fce62ebb7db9)
 
