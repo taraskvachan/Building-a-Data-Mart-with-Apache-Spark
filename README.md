@@ -16,9 +16,8 @@
 
 ## Result
 
-<ol>
-  <li>[Data Mart](https://github.com/taraskvachan/Building-a-Data-Mart-with-Apache-Spark/blob/main/Spark-Webinar.ipynb)</li>
-  <li>[Dashboard](https://github.com/taraskvachan/Building-a-Data-Mart-with-Apache-Spark/blob/main/Dashboard-Metabase.md)</li>
-</ol>
+[Data Mart](https://github.com/taraskvachan/Building-a-Data-Mart-with-Apache-Spark/blob/main/Spark-Webinar.ipynb)
+[Dashboard](https://github.com/taraskvachan/Building-a-Data-Mart-with-Apache-Spark/blob/main/Dashboard-Metabase.md)
+
 
 
