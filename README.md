@@ -9,13 +9,13 @@ Data Sources:
 <li>Visits — data from ClickHouse</li>
 <li>Advertising expenditures — data from Postgres</li>
 <li>Data mapping dictionary — CSV file</li>
-<li>Completed forms on the website and ordered projects — data from HDFS</li>
+<li>Completed forms on the website and ordered projects — data from HDFS (Parquet)</li>
 </ol>
 
 ## Project Phases:
 
 <ol>
-<li>Data transformation: Based on the technical specification (Methodology), the data was transformed.</li>
+<li>Data transformation: Based on the technical specification ([Methodology](https://github.com/taraskvachan/Building-a-Data-Mart-with-Apache-Spark/blob/main/Methodology.md)), the data was transformed.</li>
 <li>Building the data warehouse: The data warehouse was constructed using the One Big Table (OBT) concept.</li>
 <li>Data visualization: After building the data warehouse, we connected to the Metabase data visualization tool and created a dashboard to present the results.</li>
 </ol>
