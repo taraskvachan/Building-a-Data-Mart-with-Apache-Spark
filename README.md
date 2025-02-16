@@ -1,6 +1,6 @@
 # Building a Data Mart with Apache Spark (Webinar)
 
-## Project Description:
+## Project Description
 
 In this project, we worked with data obtained from a website that sold kitchen design projects. The main goal was to consolidate the data into a single data warehouse and analyze the quality of advertising interactions.
 
@@ -12,7 +12,7 @@ Data Sources:
 <li>Completed forms on the website and ordered projects — data from HDFS (Parquet)</li>
 </ol>
 
-## Project Phases:
+## Project Phases
 
 <ol>
 <li>Data transformation: Based on the technical specification Methodology, the data was transformed.</li>
